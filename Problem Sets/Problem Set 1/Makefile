@@ -5,7 +5,7 @@ NVCC=nvcc
 # locations on most linux distros #
 ###################################
 
-OPENCV_LIBPATH=/usr/lib
+OPENCV_LIBPATH=/usr/lib64
 OPENCV_INCLUDEPATH=/usr/include
 
 ###################################################
