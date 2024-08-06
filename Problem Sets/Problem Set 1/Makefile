@@ -55,4 +55,4 @@ clean:
 	rm -f *.o *.png hw
 
 test:
-	./.data/HW1 ./cinque_terre_small.jpg ./.data/output.jpg ./cinque_terre_gold.jpg
+	./.data/HW1 ./cinque_terre_small.jpg ./.data/output.jpg ./cinque_terre_gold.jpg 10.0 0.7

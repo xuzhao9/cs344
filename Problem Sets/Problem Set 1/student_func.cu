@@ -49,7 +49,8 @@ __device__
 void _transform(const uchar4* const rgbaImage,
                 unsigned char* const greyImage,
                 int pixel_offset) {
-  greyImage[pixel_offset] = (unsigned char)(rgbaImage[pixel_offset].x * 0.299f + \
+  greyImage[pixel_offset] = (unsigned char)(
+                            rgbaImage[pixel_offset].x * 0.299f + \
                             rgbaImage[pixel_offset].y * 0.587f + \
                             rgbaImage[pixel_offset].z * 0.114f);
 }
@@ -87,10 +88,10 @@ void rgba_to_greyscale(const uchar4* const rgbaImage,
   //traverse each pixel
   for (int i = 0; i < rowSize; i ++) {
     for (int j = 0; j < colSize; j ++) {
-      int pixelx = top_left_pixel_x + i;
-      int pixely = top_left_pixel_y + j;
-      if (pixelx < numRows && pixely < numCols) {
-        int pixel_offset = pixely * numRows + pixelx;
+      int pixelx = top_left_pixel_x + j;
+      int pixely = top_left_pixel_y + i;
+      if (pixelx < numCols && pixely < numRows) {
+        int pixel_offset = pixely * numCols + pixelx;
         _transform(rgbaImage, greyImage, pixel_offset);
       }
     }
@@ -102,7 +103,8 @@ void your_rgba_to_greyscale(const uchar4 * const h_rgbaImage, uchar4 * const d_r
 {
   //You must fill in the correct sizes for the blockSize and gridSize
   //currently only one block with one thread is being launched
-  const dim3 blockSize(1, 1, 1);  //TODO
+  int block_size = 1;
+  const dim3 blockSize(block_size, block_size, 1);  //TODO
   const dim3 gridSize( 1, 1, 1);  //TODO
   rgba_to_greyscale<<<gridSize, blockSize>>>(d_rgbaImage, d_greyImage, numRows, numCols);
   
