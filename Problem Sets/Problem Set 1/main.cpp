@@ -83,7 +83,7 @@ int main(int argc, char **argv) {
 
   postProcess(reference_file, h_greyImage);
 
-  //generateReferenceImage(input_file, reference_file);
+  generateReferenceImage(input_file, reference_file);
   compareImages(reference_file, output_file, useEpsCheck, perPixelError, 
                 globalError);
 

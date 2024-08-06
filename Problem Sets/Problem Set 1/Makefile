@@ -20,9 +20,9 @@ OPENCV_INCLUDEPATH=/usr/include
 #OPENCV_LIBPATH=/opt/local/lib
 #OPENCV_INCLUDEPATH=/opt/local/include
 
-OPENCV_LIBS=-lopencv_core -lopencv_imgproc -lopencv_highgui
+OPENCV_LIBS=-lopencv_aruco -lopencv_face -lopencv_gapi -lopencv_ml -lopencv_objdetect -lopencv_shape -lopencv_stitching -lopencv_superres -lopencv_optflow -lopencv_tracking -lopencv_highgui -lopencv_plot -lopencv_videostab -lopencv_videoio -lopencv_photo -lopencv_ximgproc -lopencv_video -lopencv_calib3d -lopencv_imgcodecs -lopencv_features2d -lopencv_dnn -lopencv_imgproc -lopencv_flann -lopencv_core
 
-CUDA_INCLUDEPATH=/usr/local/cuda-5.0/include
+CUDA_INCLUDEPATH=/usr/local/cuda/include
 
 ######################################################
 # On Macs the default install locations are below    #
@@ -31,12 +31,13 @@ CUDA_INCLUDEPATH=/usr/local/cuda-5.0/include
 #CUDA_INCLUDEPATH=/usr/local/cuda/include
 #CUDA_LIBPATH=/usr/local/cuda/lib
 
-NVCC_OPTS=-O3 -arch=sm_20 -Xcompiler -Wall -Xcompiler -Wextra -m64
+NVCC_OPTS=-O3 -arch=sm_80 -Xcompiler -Wall -Xcompiler -Wextra
 
-GCC_OPTS=-O3 -Wall -Wextra -m64
+GCC_OPTS=-O3 -Wall -Wextra
 
 student: main.o student_func.o compare.o reference_calc.o Makefile
-	$(NVCC) -o HW1 main.o student_func.o compare.o reference_calc.o -L $(OPENCV_LIBPATH) $(OPENCV_LIBS) $(NVCC_OPTS)
+	mkdir -p .data
+	$(NVCC) -o ./.data/HW1 main.o student_func.o compare.o reference_calc.o -L $(OPENCV_LIBPATH) $(OPENCV_LIBS) $(NVCC_OPTS)
 
 main.o: main.cpp timer.h utils.h reference_calc.cpp compare.cpp HW1.cpp
 	g++ -c main.cpp $(GCC_OPTS) -I $(CUDA_INCLUDEPATH) -I $(OPENCV_INCLUDEPATH)
@@ -52,3 +53,6 @@ reference_calc.o: reference_calc.cpp reference_calc.h
 
 clean:
 	rm -f *.o *.png hw
+
+test:
+	./.data/HW1 ./cinque_terre_small.jpg ./.data/output.jpg ./cinque_terre_gold.jpg
