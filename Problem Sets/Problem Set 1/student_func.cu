@@ -33,6 +33,24 @@
 
 #include "utils.h"
 
+__device__
+int next_power_of_2(int sz) {
+}
+
+__device__
+int _pixel_coordinate_to_offset(int x, int y, int numRows, int numCols) {
+
+}
+
+__device__
+void _transform(const uchar4* const rgbaImage,
+                unsigned char* const greyImage,
+                int pixel_offset) {
+  greyImage[pixel_offset] = rgbaImage[pixel_offset].R * 0.299f + \
+                            rgbaImage[pixel_offset].G * 0.587f + \
+                            rgbaImage[pixel_offset].B * 0.114f;
+}
+
 __global__
 void rgba_to_greyscale(const uchar4* const rgbaImage,
                        unsigned char* const greyImage,
@@ -50,6 +68,30 @@ void rgba_to_greyscale(const uchar4* const rgbaImage,
   //First create a mapping from the 2D block and grid locations
   //to an absolute 2D location in the image, then use that to
   //calculate a 1D offset
+
+  //Suppose the image format is row-major
+  // get number of pixels per threads
+  numRowsRounded = next_power_of_2(numRows);
+  numColsRounded = next_power_of_2(numCols);
+  rowSize = numRowsRounded / (blockDim.x * gridDim.x);
+  colSize = numColsRounded / (blockDim.y * gridDim.y);
+  //get the top-left location id
+  int idx = blockIdx.x * blockDim.x + threadIdx.x;
+  int idy = blockIdx.y * blockDim.y + threadIdx.y;
+  //calculate the top-left coordinate
+  int top_left_pixel_x = numCols * idx;
+  int top_left_pixel_y = colSize * idy;
+  //traverse each pixel
+  for (int i = 0; i < rowSize; i ++) {
+    for (int j = 0; j < colSize; j ++) {
+      int pixelx = top_left_pixel_x + i;
+      int pixely = top_left_pixel_y + i;
+      int pixel_offset = _pixel_coordinate_to_offset(pixelx, pixely, numRows, numCols);
+      if (pixelx < numRows && pixely < numCols) {
+        _transform(rgbaImage, greyImage, pixel_offset);
+      }
+    }
+  }
 }
 
 void your_rgba_to_greyscale(const uchar4 * const h_rgbaImage, uchar4 * const d_rgbaImage,
