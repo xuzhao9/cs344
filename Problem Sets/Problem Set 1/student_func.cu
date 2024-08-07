@@ -78,6 +78,8 @@ void rgba_to_greyscale(const uchar4* const rgbaImage,
   unsigned int numColsRounded = next_power_of_2((unsigned int)numCols);
   unsigned int rowSize = numRowsRounded / (blockDim.x * gridDim.x);
   unsigned int colSize = numColsRounded / (blockDim.y * gridDim.y);
+  assert(rowSize > 0);
+  assert(colSize > 0);
 
   //calculate the top-left coordinate
   int idx = blockIdx.x * blockDim.x + threadIdx.x;
@@ -104,7 +106,7 @@ void your_rgba_to_greyscale(const uchar4 * const h_rgbaImage, uchar4 * const d_r
   //You must fill in the correct sizes for the blockSize and gridSize
   //currently only one block with one thread is being launched
   int grid_size = 2;
-  int block_size = 4;
+  int block_size = 4; // maximum 32 threads per thread block
   const dim3 blockSize(block_size, block_size, 1);  //TODO
   const dim3 gridSize(grid_size, grid_size, 1);  //TODO
   rgba_to_greyscale<<<gridSize, blockSize>>>(d_rgbaImage, d_greyImage, numRows, numCols);
