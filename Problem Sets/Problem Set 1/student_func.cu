@@ -82,8 +82,8 @@ void rgba_to_greyscale(const uchar4* const rgbaImage,
   //calculate the top-left coordinate
   int idx = blockIdx.x * blockDim.x + threadIdx.x;
   int idy = blockIdx.y * blockDim.y + threadIdx.y;
-  int top_left_pixel_x = numCols * idx;
-  int top_left_pixel_y = numRows * idy;
+  int top_left_pixel_x = colSize * idx;
+  int top_left_pixel_y = rowSize * idy;
 
   //traverse each pixel
   for (int i = 0; i < rowSize; i ++) {
@@ -103,9 +103,10 @@ void your_rgba_to_greyscale(const uchar4 * const h_rgbaImage, uchar4 * const d_r
 {
   //You must fill in the correct sizes for the blockSize and gridSize
   //currently only one block with one thread is being launched
-  int block_size = 2;
+  int grid_size = 2;
+  int block_size = 4;
   const dim3 blockSize(block_size, block_size, 1);  //TODO
-  const dim3 gridSize( 1, 1, 1);  //TODO
+  const dim3 gridSize(grid_size, grid_size, 1);  //TODO
   rgba_to_greyscale<<<gridSize, blockSize>>>(d_rgbaImage, d_greyImage, numRows, numCols);
   
   cudaDeviceSynchronize(); checkCudaErrors(cudaGetLastError());
